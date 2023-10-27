@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { ALL_COLORS } from "./colors";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { stickerLocationsOnCubeSide as getStickerLocationsOnCubeSide } from "./StickerLocation";
+import {
+  CUBE_SIDES,
+  cubeSideToInitialColor,
+  cubeSideToMatrix4,
+} from "./CubeSide";
 
 function getStickerShape(): THREE.Shape {
   const stickerShape = new THREE.Shape();
@@ -31,7 +37,7 @@ export default class RubiksCubeScene extends THREE.Scene {
   }
 
   private generateAndAddCubePieces(): void {
-    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
     new GLTFLoader().load("RoundedCube.glb", (gltf) => {
       const geometry = gltf.scene.children[0].geometry as THREE.BufferGeometry;
       for (let x = -1; x <= 1; x++) {
@@ -52,50 +58,32 @@ export default class RubiksCubeScene extends THREE.Scene {
       depth: 0.01,
       bevelEnabled: false,
     });
-    const stickerMaterials = ALL_COLORS.map(
-      (color) => new THREE.MeshBasicMaterial({ color })
-    );
-    const getRandomStickerMaterial = () =>
-      stickerMaterials[Math.floor(Math.random() * stickerMaterials.length)];
 
-    for (const x of [-1, 0, 1]) {
-      for (const y of [-1, 0, 1]) {
-        const sticker = new THREE.Mesh(
-          stickerGeometry,
-          getRandomStickerMaterial()
-        );
-        sticker.position.set(x, y, 1.5);
-        this.add(sticker);
+    for (const cubeSide of CUBE_SIDES) {
+      const color = cubeSideToInitialColor(cubeSide);
+      const stickerMaterial = new THREE.MeshStandardMaterial({ color });
+      const stickerGroup = new THREE.Group();
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          const sticker = new THREE.Mesh(stickerGeometry, stickerMaterial);
+          sticker.position.set(x, y, 1.5);
+          stickerGroup.add(sticker);
+        }
       }
-    }
-    for (const y of [-1, 0, 1]) {
-      for (const z of [-1, 0, 1]) {
-        const sticker = new THREE.Mesh(
-          stickerGeometry,
-          getRandomStickerMaterial()
-        );
-        sticker.position.set(1.5, y, z);
-        sticker.rotation.y = Math.PI / 2;
-        this.add(sticker);
-      }
-    }
-    for (const x of [-1, 0, 1]) {
-      for (const z of [-1, 0, 1]) {
-        const sticker = new THREE.Mesh(
-          stickerGeometry,
-          getRandomStickerMaterial()
-        );
-        sticker.position.set(x, 1.5, z);
-        sticker.rotation.x = -Math.PI / 2;
-        this.add(sticker);
-      }
+      stickerGroup.setRotationFromMatrix(cubeSideToMatrix4(cubeSide));
+      this.add(stickerGroup);
     }
   }
 
   private addCameraGroup(): void {
     this.cameraGroup = new THREE.Group();
     this.cameraGroup.add(this.camera);
-    this.add(this.cameraGroup);
     this.camera.position.z = 8;
+
+    const light = new THREE.DirectionalLight(0xffffff, 3);
+    light.position.copy(this.camera.position);
+    this.cameraGroup.add(light);
+
+    this.add(this.cameraGroup);
   }
 }

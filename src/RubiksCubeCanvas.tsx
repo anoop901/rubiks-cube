@@ -13,7 +13,11 @@ export default function RubiksCubeCanvas() {
       return;
     }
     const scene = new RubiksCubeScene(canvas);
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    });
 
     let frameNumber = 0;
 
@@ -21,8 +25,7 @@ export default function RubiksCubeCanvas() {
       scene.cameraGroup.setRotationFromEuler(
         new THREE.Euler(
           0.6 * Math.sin(0.02 * frameNumber),
-          -0.6 * Math.cos(0.02 * frameNumber),
-          // 0.02 * frameNumber,
+          -0.02 * frameNumber,
           0,
           "YXZ"
         )
