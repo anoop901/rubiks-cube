@@ -96,6 +96,6 @@ export default class RubiksCubeScene extends THREE.Scene {
     this.cameraGroup = new THREE.Group();
     this.cameraGroup.add(this.camera);
     this.add(this.cameraGroup);
-    this.camera.position.z = 10;
+    this.camera.position.z = 8;
   }
 }
