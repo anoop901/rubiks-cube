@@ -1,7 +1,5 @@
 import * as THREE from "three";
-import { ALL_COLORS } from "./colors";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { stickerLocationsOnCubeSide as getStickerLocationsOnCubeSide } from "./StickerLocation";
 import {
   CUBE_SIDES,
   cubeSideToInitialColor,

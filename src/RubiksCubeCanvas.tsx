@@ -58,7 +58,6 @@ export default function RubiksCubeCanvas() {
         if (sceneRef.current == null) {
           return;
         }
-        const scene = sceneRef.current;
         const rect = event.currentTarget.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
