@@ -25,11 +25,11 @@ export default class RubiksCubeScene extends THREE.Scene {
   public readonly camera: THREE.PerspectiveCamera;
   public cameraGroup: THREE.Group;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor() {
     super();
 
     this.cameraGroup = new THREE.Group();
-    this.camera = new THREE.PerspectiveCamera(40, canvas.width / canvas.height);
+    this.camera = new THREE.PerspectiveCamera(40, 1.0);
 
     this.generateAndAddCubePieces();
     this.generateAndAddStickers();
